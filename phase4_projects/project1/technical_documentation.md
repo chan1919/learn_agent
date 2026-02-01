@@ -133,4 +133,16 @@
 ### 6.2 安装与配置
 
 1. 安装依赖：`pip install -r requirements.txt`
-2. 配置 API 密钥
+2. 配置 API 密钥：修改 config.py 中的相关配置
+
+### 6.3 运行方式
+
+- 直接运行：`python main.py`
+- 测试：`python test_agent.py`
+
+## 7. 测试与验证
+
+### 7.1 测试策略
+
+- 单元测试：验证各模块功能正确性
+- 集成
