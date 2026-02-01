@@ -133,3 +133,153 @@ class PortScanRule(SecurityRule):
     def check(self, network_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         检查是否存在端口扫描行为
+        
+        Args:
+            network_data: 网络数据
+            
+        Returns:
+            告警信息，如果没有告警返回None
+        """
+        if "source_ip" in network_data and "destination_port" in network_data:
+            source_ip = network_data["source_ip"]
+            dest_port = network_data["destination_port"]
+            timestamp = network_data.get("timestamp", time.time())
+            
+            # 清理过期数据（10秒前的数据）
+            if source_ip in self.ip_port_mapping:
+                self.ip_port_mapping[source_ip] = [(port, t) for port, t in self.ip_port_mapping[source_ip] if timestamp - t < 10]
+            else:
+                self.ip_port_mapping[source_ip] = []
+            
+            # 添加新的端口连接记录
+            self.ip_port_mapping[source_ip].append((dest_port, timestamp))
+            
+            # 检查是否超过阈值
+            unique_ports = len(set([port for port, _ in self.ip_port_mapping[source_ip]]))
+            if unique_ports > self.scan_threshold:
+                return {
+                    "rule": self.name,
+                    "severity": self.severity,
+                    "message": f"检测到端口扫描行为，源IP: {source_ip}, 尝试端口数: {unique_ports}",
+                    "timestamp": timestamp,
+                    "source_ip": source_ip
+                }
+        
+        return None
+
+
+class DDoSRule(SecurityRule):
+    """
+    DDoS检测规则
+    """
+    
+    def __init__(self):
+        """
+        初始化DDoS检测规则
+        """
+        super().__init__("DDoS检测", "high")
+        self.request_threshold = 100  # 阈值：10秒内超过100个请求
+        self.target_requests = {}  # 存储目标和请求数
+    
+    def check(self, network_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        检查是否存在DDoS攻击
+        
+        Args:
+            network_data: 网络数据
+            
+        Returns:
+            告警信息，如果没有告警返回None
+        """
+        if "destination_ip" in network_data:
+            dest_ip = network_data["destination_ip"]
+            timestamp = network_data.get("timestamp", time.time())
+            
+            # 清理过期数据（10秒前的数据）
+            if dest_ip in self.target_requests:
+                self.target_requests[dest_ip] = [(t) for t in self.target_requests[dest_ip] if timestamp - t < 10]
+            else:
+                self.target_requests[dest_ip] = []
+            
+            # 添加新的请求记录
+            self.target_requests[dest_ip].append(timestamp)
+            
+            # 检查是否超过阈值
+            request_count = len(self.target_requests[dest_ip])
+            if request_count > self.request_threshold:
+                return {
+                    "rule": self.name,
+                    "severity": self.severity,
+                    "message": f"检测到DDoS攻击，目标IP: {dest_ip}, 10秒内请求数: {request_count}",
+                    "timestamp": timestamp,
+                    "destination_ip": dest_ip
+                }
+        
+        return None
+
+
+class AnomalyDetector:
+    """
+    异常检测器
+    """
+    
+    def __init__(self):
+        """
+        初始化异常检测器
+        """
+        self.baseline = {}  # 基线数据
+        self.threshold = 2.0  # 异常阈值
+    
+    def detect(self, network_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        检测异常
+        
+        Args:
+            network_data: 网络数据
+            
+        Returns:
+            告警信息，如果没有异常返回None
+        """
+        # 简单的异常检测，实际应用中应该使用更复杂的算法
+        if "bytes_transferred" in network_data:
+            bytes_transferred = network_data["bytes_transferred"]
+            timestamp = network_data.get("timestamp", time.time())
+            
+            # 更新基线
+            self._update_baseline(bytes_transferred)
+            
+            # 检测异常
+            if self.baseline.get("mean") and self.baseline.get("std"):
+                z_score = abs(bytes_transferred - self.baseline["mean"]) / self.baseline["std"]
+                if z_score > self.threshold:
+                    return {
+                        "rule": "异常检测",
+                        "severity": "medium",
+                        "message": f"检测到异常流量，传输字节数: {bytes_transferred}, Z-score: {z_score:.2f}",
+                        "timestamp": timestamp
+                    }
+        
+        return None
+    
+    def _update_baseline(self, value: float):
+        """
+        更新基线数据
+        
+        Args:
+            value: 新的观测值
+        """
+        # 简单的移动平均和标准差计算
+        if "values" not in self.baseline:
+            self.baseline["values"] = []
+        
+        self.baseline["values"].append(value)
+        
+        # 只保留最近100个值
+        if len(self.baseline["values"]) > 100:
+            self.baseline["values"] = self.baseline["values"][-100:]
+        
+        # 计算均值和标准差
+        if self.baseline["values"]:
+            import numpy as np
+            self.baseline["mean"] = np.mean(self.baseline["values"])
+            self.baseline["std"] = np.std(self.baseline["values"])
