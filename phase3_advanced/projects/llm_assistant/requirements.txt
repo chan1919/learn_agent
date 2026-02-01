@@ -1,0 +1,10 @@
+# 依赖包
+
+# 大语言模型API
+openai==1.35.10
+
+# 工具库
+python-dotenv==1.0.0
+
+# 其他
+requests==2.31.0
