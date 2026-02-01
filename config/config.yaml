@@ -1,0 +1,61 @@
+# 大模型接口配置文件
+# 支持官方地址和转发地址
+
+# 配置版本
+version: "1.0"
+
+# 大模型接口配置
+models:
+  # OpenAI 官方接口
+  openai:
+    name: "OpenAI"
+    base_url: "https://api.openai.com/v1"
+    api_key: "your-openai-api-key"
+    models: ["gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"]
+
+    timeout: 30
+    max_retries: 3
+
+  # OpenAI 转发接口
+  openai_proxy:
+    name: "OpenAI 转发"
+    base_url: "https://api.openai-proxy.com/v1"
+    api_key: "your-proxy-api-key"
+    models: ["gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"]
+    timeout: 30
+    max_retries: 3
+
+  # Anthropic 官方接口
+  anthropic:
+    name: "Anthropic"
+    base_url: "https://api.anthropic.com/v1"
+    api_key: "your-anthropic-api-key"
+    models: ["claude-3-opus-20240229", "claude-3-sonnet-20240229"]
+    timeout: 30
+    max_retries: 3
+
+  # Google Gemini 官方接口
+  gemini:
+    name: "Google Gemini"
+    base_url: "https://generativelanguage.googleapis.com/v1"
+    api_key: "your-gemini-api-key"
+    models: ["gemini-1.5-pro", "gemini-1.5-flash"]
+    timeout: 30
+    max_retries: 3
+
+  # 自定义本地模型
+  local_model:
+    name: "本地模型"
+    base_url: "http://localhost:8000/v1"
+    api_key: "local-api-key"
+    models: ["local-gpt4o", "local-llama3"]
+    timeout: 60
+    max_retries: 2
+
+# 默认配置
+defaults:
+  model_provider: "openai"
+  default_model: "gpt-4o"
+  temperature: 0.7
+  max_tokens: 1000
+  top_p: 0.95
