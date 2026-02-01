@@ -69,4 +69,21 @@
 - **适用人群**：对认知科学和 Agent 设计感兴趣的学习者
 - **推荐理由**：从认知科学角度理解 Agent 设计
 
-##
+## 2. 在线课程
+
+### 2.1 平台课程
+
+#### Coursera：人工智能专项课程
+- **平台**：Coursera
+- **提供方**：University of Washington
+- **课程内容**：
+  - 人工智能基础
+  - 知识表示与推理
+  - 搜索算法
+  - 规划与决策
+- **课程链接**：https://www.coursera.org/specializations/artificial-intelligence
+- **适用人群**：初学者和进阶学习者
+- **推荐理由**：系统全面，由顶尖大学提供
+
+#### Udemy：强化学习 A-Z
+- **
