@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+ENV/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Trae IDE
+.trae/
+
+# Build
+build/
+dist/
+*.egg
+
+# Test
+.pytest_cache/
+.tox/
+
+# Logs
+*.log
+
+# Local configuration
+local_settings.py
