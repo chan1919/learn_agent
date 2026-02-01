@@ -7,7 +7,7 @@ venv/
 env/
 ENV/
 *.egg-info/
-config/config.yaml
+# config/config.yaml
 # IDE
 .vscode/
 .idea/
