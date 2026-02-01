@@ -1,0 +1,14 @@
+# 基础依赖
+python-dotenv
+requests
+
+# 大语言模型 API 客户端
+openai
+anthropic
+
+# 工具库
+pyyaml
+python-dateutil
+
+# 测试库
+pytest
